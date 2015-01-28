@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<RegistrationRoot>
+
+  <DefaultSystemRegistration>
+    <Element Name="CyDIW" Prefix="CyDB" 
+       ClassPath="" 
+       LibraryPath="lib" 
+       WorkspacePath="CyWorkspace" />
+  </DefaultSystemRegistration>
+
+  <ExternalSystemRegistration>
+  <!--
+    The "$OS" prefix is reserved for the OS command client adapter, 
+    and is always loaded into CyDIW by default.
+
+    <Client Name="OS" Prefix="OS" Enabled="yes"
+       ClassPath="" LibraryPath="" 
+       ClientAdapter="cysystem.clientsmanager.clients.OSAdapter" />
+  -->
+      <Client Name="MySQL" Prefix="$MySQL" Enabled="yes"
+      ClassPath="" 
+      LibraryPath="cyclients\sql\drivers" 
+      ClientAdapter="cyclients.sql.adapter.SQLClientAdapter" DriverClass="com.mysql.jdbc.Driver" 
+      ConnectionString="jdbc:mysql://csdb.cs.iastate.edu:3306/mattroseDB" 
+      Username="mattrose" Password="mattrose-50" />
+ 
+    <Client Name="Saxon" Prefix="$Saxon" Enabled="yes"
+      ClassPath="" 
+      LibraryPath="lib\saxon" 
+      WorkspacePath="E:\workspace\CyDIW_v0.0"
+      ClientAdapter="cyclients.saxon.adapter.SaxonAdapter" /> 
+
+	  <Client Name="JBCX" Prefix="$JBCX" Enabled="no"
+      ClassPath="" 
+      LibraryPath="" 
+      WorkspacePath="" 
+      ClientAdapter="cyjbcx.adapter.JDBCXAdapter" 
+      Hostname="localhost" PortNum = "4360" /> 
+
+
+      <Client Name="OOXQquery" Prefix="OOXQuery" Enabled="yes"
+      ClassPath="" 
+      LibraryPath="cyclients\ooquery\lib" 
+      WorkspacePath="" 
+      ClientAdapter="cyclients.ooquery.adapter.OoqueryAdapter" /> 
+
+  </ExternalSystemRegistration>
+
+</RegistrationRoot>

@@ -1,0 +1,101 @@
+// OBJECT ORIENTED QUERIES; 
+
+
+// Note: in order to run Object Oriented queries in this demo, the STRICT Schema Validation mode in Saxon must be set, so that the id() function can be used;
+
+// Set the StrictSchemaValidation to true;
+$Saxon:> setStrictSchemaValidation true;
+
+/* To view Personnel_OO_DB xml document and its .xsd schema highlight any of the following and click [Run Selected] 
+$OS:> ComS363\Datasets\Personnel_OO_DB.xml; 
+$OS:> ComS363\Datasets\Personnel_OO_DB.xsd; 
+*/
+
+
+// Example 1. Report Date Of Birth of John's Manager. This is a very interesting query; 
+
+/*
+Ideally in a system that supports object-oriented databases, the query should be as follows:
+
+for $e in doc("ComS363/Demos/Datasets/Personnel_OO_DB.xml")//Person
+where $e/Name="John Doe"
+return $e/WorksIn/ManagedBy//DOB
+
+As in the plain English query, the above object-oriented expression is a selection.
+ However, in a relational system the query would require a 6 relations / aliases in the from clause and lots of spurious join conditions in the where clause. 
+*/
+ // In our object-oriented style that exploits Saxon's id() function, the query is as follows;  
+
+<showtext>
+$Saxon:>
+for $e in doc("ComS363/Demos/Datasets/Personnel_OO_DB.xml")//Emp
+where $e/id($e/As_Person/@PersonID)/Name="John Doe"
+return $e/id(
+    $e/id( 
+        $e/id( 
+            $e/id( 
+                $e/WorksIn/@DeptID 
+            )/ManagedBy/@ManagerID 
+        )/As_Emp/@EmpID 
+    )/As_Person/@PersonID 
+)/DOB; 
+</showtext>
+
+
+// Example 2. Report employee information about Emp005 (who is actually John Doe); 
+
+<showtext>
+$Saxon:> 
+for $e in doc("ComS363/Demos/Datasets/Personnel_OO_DB.xml")//Emp
+where $e/@EmpID = 'Emp005' 
+return $e; 
+</showtext>
+
+// Example 3. Cascading steps for referencing. (Any steps can be erased to see the effect more clearly.); 
+
+<showtext>
+$Saxon:> 
+for $e in doc("ComS363/Demos/Datasets/Personnel_OO_DB.xml")//Emp
+where $e/@EmpID = 'Emp005' 
+return 
+<ShowSteps> 
+   <Step_1> {$e} </Step_1>
+   <Step_2> {$e/WorksIn} </Step_2>
+   <Step_3> {$e/WorksIn/@DeptID} </Step_3>
+   <Step_4> {$e/id($e/WorksIn/@DeptID)} </Step_4>  
+</ShowSteps>; 
+</showtext>
+
+// Example 4. Cascading steps for inheritance. (Any steps can be erased to see the effect more clearly.); 
+
+<showtext>
+$Saxon:> 
+for $e in doc("ComS363/Demos/Datasets/Personnel_OO_DB.xml")//Emp
+where $e/@EmpID = 'Emp005' 
+return 
+<ShowSteps> 
+   <Step_1> {$e/As_Person} </Step_1>
+   <Step_2> {$e/As_Person/@PersonID} </Step_2>
+   <Step_3> {$e/id($e/As_Person/@PersonID)} </Step_3>
+   <Step_4> {$e/id($e/As_Person/@PersonID)/Name/text()} </Step_4>
+</ShowSteps>; 
+</showtext>
+
+// Example 5. Report Date Of Birth of managers of all employees; 
+
+<showtext>
+$Saxon:> 
+for $e in doc("ComS363/Demos/Datasets/Personnel_OO_DB.xml")//Emp
+return 
+<ManagerDOB> {
+   $e/id( $e/id( $e/id( $e/id( $e/WorksIn/@DeptID )
+   /ManagedBy/@ManagerID )
+   /As_Emp/@EmpID )
+   /As_Person/@PersonID )/DOB/text()
+} </ManagerDOB>; 
+</showtext>
+
+// Set the StrictSchemaValidation to false at the end of SECTION D;
+$Saxon:> setStrictSchemaValidation false;
+
+

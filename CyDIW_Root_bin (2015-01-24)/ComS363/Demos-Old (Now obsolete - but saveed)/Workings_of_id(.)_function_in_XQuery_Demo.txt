@@ -1,0 +1,38 @@
+/* This is a test to verify if Saxon is working with scheme awaraness. 
+   In particular schema awareness is needed for the id(.) function. 
+*/
+
+// First make sure that Schema-unaware Saxon is working;
+
+$Saxon:> setStrictSchemaValidation false;
+
+<showtext>
+$Saxon:> 
+<Everyone> 
+{
+   for $e in doc ("ComS363/Demos/Datasets/Emp.xml")// Name 
+   return <Who> {$e} </Who> 
+} 
+</Everyone>;
+</showtext>
+
+// Now make sure that Schema-aware Saxon is working;
+ 
+// For this the "saxon-license.lic" file containg a valid license file has to be in the \CyDIW_Root\saxon\lib folder;  
+
+$Saxon:> setStrictSchemaValidation true;
+// Schema awareness requires an .xml file to be accompanied with .xsd schema file;  
+
+<showtext>
+$Saxon:> 
+for $e in doc("ComS363/Demos/Datasets/PersonnelOODB.xml")// Emp
+where $e/@EmpID = 'Emp005' 
+return 
+<ShowSteps> 
+   <Step_1> {$e/ISA/@oID} </Step_1>
+   <Step_2> {$e/id($e/ISA/@oID)} </Step_2>
+   <Step_3> {$e/id($e/ISA/@oID)/Name/text()} </Step_3>
+</ShowSteps>; 
+</showtext>
+
+// >>> If the output includes "<Step_3>John Doe</Step_3>" schema awareness is working properly <<<; 

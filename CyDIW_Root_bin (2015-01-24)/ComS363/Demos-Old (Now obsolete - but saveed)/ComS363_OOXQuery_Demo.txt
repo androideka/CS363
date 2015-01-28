@@ -1,0 +1,53 @@
+// Seaction 1. The user view (this is enough for Project P3);
+
+// Report names and dates of birth of managers of employees earning over 70000; 
+<showtext>
+$OOXQuery:> 
+<Item> {
+for $e in doc("ComS363/Demos/Datasets/PersonnelOODB.xml")//Emp
+where $e.Salary > 70000
+return <MDOB> { $e.WorksIn.ManagedBy.Name, $e.WorksIn.ManagedBy.DOB } </MDOB>
+} </Item>;
+</showtext>
+
+// Section 2. Internal details of OOXQuery dialect; 
+// This is NOT necessary for Project 3; 
+// But as computer science students you should have a serious interest in it; 
+
+// See all OOXQuery commands; 
+$OOXQuery:> list commands;
+
+// Create PersonnelOODB.DotToId.xml in the same directory as .xsd;  
+// Created automatically on OOXQuery execution if it does not already exist; 
+$OOXQuery:> createDotToIDMap ComS363/Demos/Datasets/PersonnelOODB.xsd;
+// View its contents; 
+$CyDB:> displayxml ComS363/Demos/Datasets/PersonnelOODB.DotToId.xml; 
+
+// Create variables for understanding various optiuons for OOXQuery processing; 
+$CyDB:> declare string $$Query1;
+$CyDB:> declare string $$Query1Translation;
+
+$CyDB:> set $$Query1 :=
+<Item> {
+for $e in doc("ComS363/Demos/Datasets/PersonnelOODB.xml")//Emp
+where $e.Salary > 70000
+return <MDOB> { $e.WorksIn.ManagedBy.Name, $e.WorksIn.ManagedBy.DOB } </MDOB>
+} </Item>;
+
+$OOXQuery:> translate $$Query1 $$Query1Translation;
+
+// See current variables and their values; 
+$CyDB:> list variables;
+
+$Saxon:> setStrictSchemaValidation true;
+
+<showtext>
+$Saxon:> $$Query1Translation;
+</showtext>
+
+$Saxon:> setStrictSchemaValidation false;
+
+<showtext>
+$OOXQuery:> $$Query1;
+</showtext>
+

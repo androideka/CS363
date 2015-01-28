@@ -1,0 +1,161 @@
+
+$Ooquery:> list commands;
+
+$Ooquery:> createDotToIDMap ComS363/Datasets/UniversityOODB.xsd;
+
+$Ooquery:> createDotToIDMap ComS363/Datasets/PersonnelOODB.xsd;
+
+
+$CyDB:> declare string $$Statement;
+
+$CyDB:> set $$Statement := 
+<Item> {
+for $f in doc("ComS363/Datasets/UniversityOODB.xml")//Faculty
+return <F> { $f.Salary } </F>
+} </Item>;
+
+$CyDB:>list variables;
+
+
+/* 1. class attribute. expected output: $f/Salary */
+<showtext>
+$Ooquery:> 
+<Item> {
+for $f in doc("ComS363/Datasets/UniversityOODB.xml")//Faculty
+return <F> { $f.Salary/text() } </F>
+} </Item>;
+</showtext>
+
+/* 2. class id. expected output: $f/@FacultyID */
+<showtext>
+$Ooquery:> 
+<Item> {
+for $f in doc("ComS363/Datasets/UniversityOODB.xml")//Faculty
+return <F> { $f.@FacultyID } </F>
+} </Item>;
+</showtext>
+
+/* 3. class single inheritence with single level. expected output: $f/id($f/ISA/@oID)/Name */
+<showtext>
+$Ooquery:> 
+<Item> {
+for $f in doc("ComS363/Datasets/UniversityOODB.xml")//Faculty
+return <F> { $f.Name/text() } </F>
+} </Item>;
+</showtext>
+
+/* 4. class single reference. expected output: $e/id($e/StudentInfo/@oID) */
+<showtext>
+$Ooquery:> 
+<Item> {
+for $e in doc("ComS363/Datasets/UniversityOODB.xml")//Enrollment
+where $e.@EnrollmentID = "Enrollment018"
+return <E> { $e.StudentInfo } </E>
+} </Item>;
+</showtext>
+
+/* 5. class single inheritence with multi level. expected output: $m/id($m/id($m/ISA/@oID)/ISA/@oID)/Name */
+/*
+<showtext>
+$Ooquery:> 
+<Item> {
+for $m in doc("ComS363/Datasets/PersonnelOODB.xml")//Manager
+return <M> { $m.Name } </M>
+} </Item>;
+</showtext>*/
+
+/* 6. classes in multi-databases. expected output:  $e/id($e/WorksIn/@oID), $f/id($f/ISA/@oID)/Name */
+/*
+<showtext>
+$Ooquery:> 
+<Item> {
+for $f in doc("ComS363/Datasets/University.OODB.xml")//Faculty
+	for $e in doc("ComS363/Datasets/")//Emp
+		return <R> 
+			<E> { $e.WorksIn } </E>
+			<F> { $f.Name } </F>
+		</R>
+} </Item>;
+</showtext>*/
+
+/* 7. multi-dot query. expected output:  $d/id($d/ManagedBy/@ManagerID)/Budget*/
+<showtext>
+$Ooquery:> 
+<Item> {
+for $e in doc("ComS363/Datasets/UniversityOODB.xml")//Enrollment
+where $e.Grade = "C-"
+return <E> { $e.StudentInfo.Name/text() } </E>
+} </Item>;
+</showtext>
+
+
+/* error cases */
+
+<showtext>
+$Ooquery:> 
+<Item> {
+for $e in doc("ComS363/Datasets/UniversityOODB.xml")//Enrollment
+return <D> { $e.StudentInfo..Name } </D>
+} </Item>;
+</showtext>
+
+
+<showtext>
+$Ooquery:> 
+<Item> {
+for $e in doc("ComS363/Datasets/UniversityOODB.xml")//Enrollment
+return <D> { $e.Student } </D>
+} </Item>;
+</showtext>
+
+<showtext>
+$Ooquery:> 
+<Item> {
+for $e in doc("ComS363/Datasets/UniversityOODB.xml")//Enrollment
+return <D> { $e.StudentInfo.Name.Name } </D>
+} </Item>;
+</showtext>
+
+
+$Saxon:> setStrictSchemaValidation true;
+
+
+<showtext>
+$Saxon:> 
+for $e in doc("ComS363/Datasets/PersonnelOODB-IDREFS.xml")//Emp
+where $e/@EmpID = 'Emp005'
+return
+<Q10_Output>{
+$e/id($e/WorksIn/@oID)/DName
+}</Q10_Output>
+;
+</showtext>
+
+
+<showtext>
+$Saxon:> 
+for $e in doc("ComS363/Datasets/PersonnelOODB.xml")//Emp
+let $m := $e/id($e/id($e/WorksIn/@oID)/ManagedBy/@oID)
+where $e/@EmpID = 'Emp005'
+return
+<Q10_Output>{
+for $y in $m
+      return $y/Budget
+}</Q10_Output>
+;
+</showtext>
+
+
+<showtext>
+$Ooquery:> 
+for $e in doc("ComS363/Datasets/PersonnelOODB.xml")//Emp
+let $m := $e.WorksIn.ManagedBy
+where $e.@EmpID = 'Emp005'
+return
+<Q10_Output>{
+ 
+<Budget>{ $m.Budget/text() }</Budget>
+}</Q10_Output>
+;
+</showtext>
+

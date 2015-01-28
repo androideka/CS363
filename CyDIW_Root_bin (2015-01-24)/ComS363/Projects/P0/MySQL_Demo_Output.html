@@ -1,0 +1,343 @@
+<html>
+  <head>
+    
+  </head>
+  <body>
+    <pre><span><font size="3pt" color="blue">// The /* ... */ type comments do not display in the output pane;</font></span><br><span><font size="3pt" color="blue">// The // type comments must end in a semicolon and will be displayed in the output pane;</font></span><br><span><font size="3pt" color="blue">// Section 0. Connect to your database;</font></span><br><span><font size="3pt" color="blue">// The database must exist even though it may be empty;</font></span><br><span><font size="3pt" color="blue">$MySQL:&gt; connect;</font></span><br>The connection to the SQL database is established!
+<br><span><font size="3pt" color="blue">// In case the database is not empty execute the following;</font></span><br><span><font size="3pt" color="blue">// Note: Normally you do not take dropping of tables so casually ;</font></span><br><span><font size="3pt" color="blue">// But here you will find it very convinient;</font></span><br><span><font size="3pt" color="blue">// These commands will ensure that your experiment (batch of commands) is repetable;</font></span><br><span><font size="3pt" color="blue">$MySQL:&gt; drop table Dept;</font></span><br>The query is executed successfully!
+<br><span><font size="3pt" color="blue">$MySQL:&gt; drop table Emp;</font></span><br>The query is executed successfully!
+<br><span><font size="3pt" color="blue">// Section 1. Create Tables in the database;</font></span><br><span><font size="3pt" color="blue">$MySQL:&gt; create table Emp (
+Name char(15) not null,
+DName char(10),
+Salary integer,
+primary key (Name));</font></span><br>The query is executed successfully!
+<br><span><font size="3pt" color="blue">$MySQL:&gt; create table Dept (
+DName char(10),
+MName char(15),
+primary key (DName) );</font></span><br>The query is executed successfully!
+<br><span><font size="3pt" color="blue">// Section 2. Check conteents of empty tables;</font></span><br><span><font size="3pt" color="blue">$MySQL:&gt; select * from Emp;</font></span><br></pre>
+    <table border="1">
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          DName
+        </th>
+        <th>
+          Salary
+        </th>
+      </tr>
+    </table>
+    <br>
+    
+
+    <pre><span><font size="3pt" color="blue">$MySQL:&gt; select * from Dept;</font></span><br></pre>
+    <table border="1">
+      <tr>
+        <th>
+          DName
+        </th>
+        <th>
+          MName
+        </th>
+      </tr>
+    </table>
+    <br>
+    
+
+    <pre><span><font size="3pt" color="blue">// Section 3. Bulk-load tables;</font></span><br><span><font size="3pt" color="blue">// View the data you are about to load;</font></span><br><span><font size="3pt" color="blue">$CyDB:&gt; DisplayXML ComS363/Demos/Datasets/Personnel_Dataset.xml;</font></span><br><br><span><font size="3pt" color="blue">// Now load;</font></span><br><span><font size="3pt" color="blue">$MySQL:&gt; load | Emp | ComS363/Demos/Datasets/Personnel_Dataset.xml;</font></span><br>The relation &quot;Emp&quot; is loaded successfully!
+<br><span><font size="3pt" color="blue">$MySQL:&gt; load | Dept | ComS363/Demos/Datasets/Personnel_Dataset.xml;</font></span><br>The relation &quot;Dept&quot; is loaded successfully!
+<br><span><font size="3pt" color="blue">// Section 3. Check loaded tables;</font></span><br><span><font size="3pt" color="blue">$MySQL:&gt; select * from Emp;</font></span><br></pre>
+    <table border="1">
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          DName
+        </th>
+        <th>
+          Salary
+        </th>
+      </tr>
+      <tr>
+        <td>
+          Hari
+        </td>
+        <td>
+          Credit
+        </td>
+        <td>
+          55000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          John
+        </td>
+        <td>
+          Toys
+        </td>
+        <td>
+          50000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Leu
+        </td>
+        <td>
+          Shoes
+        </td>
+        <td>
+          70000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Mary
+        </td>
+        <td>
+          Toys
+        </td>
+        <td>
+          60000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Superman
+        </td>
+        <td>
+          Audit
+        </td>
+        <td>
+          100000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Jane
+        </td>
+        <td>
+          Credit
+        </td>
+        <td>
+          65000
+        </td>
+      </tr>
+    </table>
+    <br>
+    
+
+    <pre><span><font size="3pt" color="blue">$MySQL:&gt; select * from Dept;</font></span><br></pre>
+    <table border="1">
+      <tr>
+        <th>
+          DName
+        </th>
+        <th>
+          MName
+        </th>
+      </tr>
+      <tr>
+        <td>
+          Credit
+        </td>
+        <td>
+          CC
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Shoes
+        </td>
+        <td>
+          SS
+        </td>
+      </tr>
+    </table>
+    <br>
+    
+
+    <pre><span><font size="3pt" color="blue">// Section 4. Queries and updates;</font></span><br><span><font size="3pt" color="blue">$MySQL:&gt; select d.MName 
+from Emp e, Dept d 
+where e.Name = 'John'
+   and e.DName = d.DName;</font></span><br></pre>
+    <table border="1">
+      <tr>
+        <th>
+          MName
+        </th>
+      </tr>
+    </table>
+    <br>
+    
+
+    <pre><span><font size="3pt" color="blue">$MySQL:&gt; update Emp
+set Salary = Salary + 10000
+where Name = 'Superman';</font></span><br>1 row affected!
+<br><span><font size="3pt" color="blue">$MySQL:&gt; select * from Emp;</font></span><br></pre>
+    <table border="1">
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          DName
+        </th>
+        <th>
+          Salary
+        </th>
+      </tr>
+      <tr>
+        <td>
+          Hari
+        </td>
+        <td>
+          Credit
+        </td>
+        <td>
+          55000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          John
+        </td>
+        <td>
+          Toys
+        </td>
+        <td>
+          50000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Leu
+        </td>
+        <td>
+          Shoes
+        </td>
+        <td>
+          70000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Mary
+        </td>
+        <td>
+          Toys
+        </td>
+        <td>
+          60000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Superman
+        </td>
+        <td>
+          Audit
+        </td>
+        <td>
+          110000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Jane
+        </td>
+        <td>
+          Credit
+        </td>
+        <td>
+          65000
+        </td>
+      </tr>
+    </table>
+    <br>
+    
+
+    <pre><span><font size="3pt" color="blue">$MySQL:&gt; delete from Emp 
+where Salary &gt; 100000;</font></span><br>1 row affected!
+<br><span><font size="3pt" color="blue">$MySQL:&gt; select * from Emp;</font></span><br></pre>
+    <table border="1">
+      <tr>
+        <th>
+          Name
+        </th>
+        <th>
+          DName
+        </th>
+        <th>
+          Salary
+        </th>
+      </tr>
+      <tr>
+        <td>
+          Hari
+        </td>
+        <td>
+          Credit
+        </td>
+        <td>
+          55000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          John
+        </td>
+        <td>
+          Toys
+        </td>
+        <td>
+          50000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Leu
+        </td>
+        <td>
+          Shoes
+        </td>
+        <td>
+          70000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Mary
+        </td>
+        <td>
+          Toys
+        </td>
+        <td>
+          60000
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Jane
+        </td>
+        <td>
+          Credit
+        </td>
+        <td>
+          65000
+        </td>
+      </tr>
+    </table>
+    <br>
+    
+
+    <pre><span><font size="3pt" color="blue">$MySQL:&gt; insert into 
+Emp (Name, DName, Salary)
+values ('Superman', 'Audit', 100000);</font></span><br>1 row affected!
+<br><span><font size="3pt" color="blue">$MySQL:&gt; disconnect;</font></span><br>The current SQL database has been disconnected.</pre>
+  </body>
+</html>
