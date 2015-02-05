@@ -1,0 +1,88 @@
+$MySQL:>connect;
+
+$MySQL:> drop table Person;
+$MySQL:> drop table Instructor;
+$MySQL:> drop table Student;
+$MySQL:> drop table Course;
+$MySQL:> drop table Offering;
+$MySQL:> drop table Enrollment;
+
+// Create person table;
+$MySQL:>CREATE TABLE Person
+(
+ID CHAR(9) NOT NULL,
+Name CHAR(20),
+Address CHAR(30),
+DOB DATE,
+primary key(ID)
+);
+
+// Create instructor table;
+$MySQL:>CREATE TABLE Instructor
+(
+InstructorID CHAR(9) NOT NULL references Person,
+Rank CHAR(12),
+Salary INTEGER,
+primary key(InstructorID)
+);
+
+// Create student table;
+$MySQL:>CREATE TABLE Student
+(
+StudentID CHAR(9) NOT NULL,
+Classification CHAR(10),
+GPA DOUBLE(3,2),
+MentorID CHAR(9) references Instructor,
+CreditHours INTEGER,
+primary key(StudentID)
+);
+
+// Create course table;
+$MySQL:>CREATE TABLE Course
+(
+CourseCode CHAR(6) NOT NULL,
+CourseName CHAR(50),
+PreReq CHAR(6),
+primary key(CourseCode)
+);
+
+// Create offering table;
+$MySQL:>CREATE TABLE Offering
+(
+CourseCode CHAR(6) NOT NULL,
+SectionNo INTEGER NOT NULL,
+InstructorID CHAR(9) NOT NULL references Instructor,
+primary key(CourseCode, SectionNo)
+);
+
+// Create enrollment table;
+$MySQL:>CREATE TABLE Enrollment
+(
+CourseCode CHAR(6) NOT NULL,
+SectionNo INTEGER NOT NULL,
+StudentID CHAR(9) NOT NULL references Student,
+Grade CHAR(4) NOT NULL,
+primary key(CourseCode, StudentID),
+foreign key(CourseCode, SectionNo) references Offering
+);
+
+// Load person table;
+$MySQL:> load | Person | ComS363/Projects/Datasets/Person.xml;
+
+// Load instructor table;
+$MySQL:> load | Instructor | ComS363/Projects/Datasets/Instructor.xml;
+
+// Load student table;
+$MySQL:> load | Student | ComS363/Projects/Datasets/Student.xml;
+
+// Load course table;
+$MySQL:> load | Course | ComS363/Projects/Datasets/Course.xml;
+
+// Load offering table;
+$MySQL:> load | Offering | ComS363/Projects/Datasets/Offering.xml;
+
+// Load enrollment table;
+$MySQL:> load | Enrollment | ComS363/Projects/Datasets/Enrollment.xml;
+
+
+$MySQL:>SELECT * from Student;
