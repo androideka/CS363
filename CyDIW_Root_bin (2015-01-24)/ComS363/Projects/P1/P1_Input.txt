@@ -67,22 +67,85 @@ foreign key(CourseCode, SectionNo) references Offering
 );
 
 // Load person table;
-$MySQL:> load | Person | ComS363/Projects/Datasets/Person.xml;
+$MySQL:> load | Person | ComS363/Projects/Datasets/University_Dataset.xml;
 
 // Load instructor table;
-$MySQL:> load | Instructor | ComS363/Projects/Datasets/Instructor.xml;
+$MySQL:> load | Instructor | ComS363/Projects/Datasets/University_Dataset.xml;
 
 // Load student table;
-$MySQL:> load | Student | ComS363/Projects/Datasets/Student.xml;
+$MySQL:> load | Student | ComS363/Projects/Datasets/University_Dataset.xml;
 
 // Load course table;
-$MySQL:> load | Course | ComS363/Projects/Datasets/Course.xml;
+$MySQL:> load | Course | ComS363/Projects/Datasets/University_Dataset.xml;
 
 // Load offering table;
-$MySQL:> load | Offering | ComS363/Projects/Datasets/Offering.xml;
+$MySQL:> load | Offering | ComS363/Projects/Datasets/University_Dataset.xml;
 
 // Load enrollment table;
-$MySQL:> load | Enrollment | ComS363/Projects/Datasets/Enrollment.xml;
+$MySQL:> load | Enrollment | ComS363/Projects/Datasets/University_Dataset.xml;
 
 
-$MySQL:>SELECT * from Student;
+// Item 13: List IDs of students and the IDs of their mentors for students who are juniors or seniors having a GPA above 3.8;
+$MySQL:>select s.StudentId, s.MentorID
+from Student s
+where (s.Classification = "Junior"
+    or s.Classification = "Senior")
+    and s.GPA > 3.8;
+
+// Item 14. List the distinct course codes and sections for courses that are being taken by sophomore;
+$MySQL:>select distinct e.CourseCode, e.SectionNo
+from Enrollment e
+inner join Student on e.StudentId=Student.StudentID
+where Student.Classification = "Sophomore";
+
+$CyDB:> DisplayXML ComS363/Projects/Datasets/University_Dataset.xml;
+
+// Item 15. List the name and salary for mentors of all freshmen;
+$MySQL:>select distinct i.Salary, p.Name
+from Instructor i
+inner join Person p on i.InstructorID=p.ID
+inner join Student s on i.InstructorID=s.MentorID
+where s.Classification="Freshman";
+
+// Item 16. Find the total salary of all instructors who are not offering any course;
+$MySQL:>select sum(i.Salary)
+from Instructor i
+where i.InstructorID not in (select o.InstructorID from Offering o);
+
+// Item 17. List all the names and DOBs of students who were born in 1976. The expression "Year(x.DOB) = 1976", checks if x is born in the year 1976;
+$MySQL:>select p.Name, p.DOB
+from Person p
+inner join Student s on p.ID=s.StudentID
+where year(p.DOB) = 1976;
+
+// Item 18. List the names and rank of instructors who neither offer a course nor mentor a student;
+$MySQL:>select p.Name, i.Rank
+from Instructor i
+inner join Person p on i.InstructorID=p.ID
+where i.InstructorID not in (select s.MentorID from Student s)
+    and i.InstructorID not in (select o.InstructorID from Offering o);
+
+// Item 19. Find the IDs, names and DOB of the youngest student(s);
+$MySQL:>select p.ID, p.Name, min(p.DOB)
+from Person p
+inner join Student s on p.ID=s.StudentID;
+
+// Item 20. List the IDs, DOB, and Names of Persons who are neither a student nor a instructor;
+$MySQL:>select p.ID, p.DOB, p.Name
+from Person p
+where (p.ID not in(select s.StudentID from Student s)
+    and p.ID not in (select i.InstructorID from Instructor i));
+
+// Item 21. For each instructor list his / her name and the number of students he / she mentors;
+$MySQL:>select p.Name, count(s.MentorID)
+from Instructor i
+join Person p on i.InstructorID=p.ID
+join Student s on i.InstructorID=s.MentorID;
+
+// Item 22. List the number of students and average GPA for each classification. Your query should not use constants such as "Freshman";
+
+// Item 23. Report the course(s) with lowest enrollments. You should output the course code and the number of enrollments;
+
+// Item 24. List the IDs and Mentor IDs of students who are taking some course, offered by their mentor;
+
+// Item 25. List the student id, name, and completed credit hours of all freshman born in or after 1976;
