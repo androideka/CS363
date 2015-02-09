@@ -137,15 +137,38 @@ where (p.ID not in(select s.StudentID from Student s)
     and p.ID not in (select i.InstructorID from Instructor i));
 
 // Item 21. For each instructor list his / her name and the number of students he / she mentors;
-$MySQL:>select p.Name, count(s.MentorID)
-from Instructor i
-join Person p on i.InstructorID=p.ID
-join Student s on i.InstructorID=s.MentorID;
+$MySQL:>select p.Name, count(s.MentorID) as StudentsMentored
+from Student s
+inner join Instructor i on s.MentorID=i.InstructorID
+inner join Person p on p.ID=s.MentorID
+group by s.MentorID;
 
 // Item 22. List the number of students and average GPA for each classification. Your query should not use constants such as "Freshman";
+$MySQL:>select count(s.StudentID), avg(s.GPA)
+from Student s
+group by s.Classification;
 
 // Item 23. Report the course(s) with lowest enrollments. You should output the course code and the number of enrollments;
+$MySQL:>select e.CourseCode, count(e.CourseCode) as CourseEnrolls
+from Enrollment e
+group by e.CourseCode
+order by CourseEnrolls asc limit 1;
 
 // Item 24. List the IDs and Mentor IDs of students who are taking some course, offered by their mentor;
+$MySQL:>select s.StudentID, s.MentorID
+from Student s
+inner join Enrollment e on s.StudentID=e.StudentID
+inner join Offering o on s.MentorID=o.InstructorID;
+
 
 // Item 25. List the student id, name, and completed credit hours of all freshman born in or after 1976;
+
+// Item 26. 
+
+// Item 27.
+
+// Item 28.
+
+// Item 29.
+
+// Item 30.
