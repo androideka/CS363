@@ -84,7 +84,6 @@ $MySQL:> load | Offering | ComS363/Projects/Datasets/University_Dataset.xml;
 // Load enrollment table;
 $MySQL:> load | Enrollment | ComS363/Projects/Datasets/University_Dataset.xml;
 
-
 // Item 13: List IDs of students and the IDs of their mentors for students who are juniors or seniors having a GPA above 3.8;
 $MySQL:>select s.StudentId, s.MentorID
 from Student s
@@ -97,8 +96,6 @@ $MySQL:>select distinct e.CourseCode, e.SectionNo
 from Enrollment e
 inner join Student on e.StudentId=Student.StudentID
 where Student.Classification = "Sophomore";
-
-$CyDB:> DisplayXML ComS363/Projects/Datasets/University_Dataset.xml;
 
 // Item 15. List the name and salary for mentors of all freshmen;
 $MySQL:>select distinct i.Salary, p.Name
@@ -155,20 +152,91 @@ group by e.CourseCode
 order by CourseEnrolls asc limit 1;
 
 // Item 24. List the IDs and Mentor IDs of students who are taking some course, offered by their mentor;
-$MySQL:>select s.StudentID, s.MentorID
+$MySQL:>select distinct s.StudentID, s.MentorID
 from Student s
 inner join Enrollment e on s.StudentID=e.StudentID
-inner join Offering o on s.MentorID=o.InstructorID;
-
+inner join Offering o on s.MentorID=o.InstructorID
+where s.MentorID=o.InstructorID;
 
 // Item 25. List the student id, name, and completed credit hours of all freshman born in or after 1976;
+$MySQL:>select s.StudentID, p.name, s.CreditHours
+from Student s
+inner join Person p on s.StudentID=p.ID
+where p.DOB > '1976-01-01';
 
-// Item 26. 
+// Item 26;
+$MySQL:>insert into Person(ID, Name, Address, DOB)
+values('480293439', 'Briggs Jason', '215, North Hyland Avenue', '1975-01-15');
+$MySQL:>insert into Student(StudentID, Classification, GPA, CreditHours, MentorID)
+values('480293439', 'Junior', '3.48', '75', '201586985' );
+$MySQL:>insert into Enrollment(CourseCode, SectionNo, StudentID, Grade)
+values('CS311', '2', '480293439', 'A');
+$MySQL:>insert into Enrollment(CourseCode, SectionNo, StudentID, Grade)
+values('CS330', '1', '480293439', 'A-');
 
-// Item 27.
+$MySQL:>select * from Person p where p.name='Briggs Jason';
+$MySQL:>select * from Student s where s.StudentID='480293439';
+$MySQL:>select * from Enrollment e where e.StudentID='480293439';
 
-// Item 28.
+// Item 27;
+$MySQL:>delete e.*
+from Enrollment e
+inner join Student s on e.StudentID=s.StudentID
+where s.GPA < 0.5;
+$MySQL:>delete 
+from Student
+where GPA < 0.5;
 
-// Item 29.
+$MySQL:>select * from Student s where s.GPA < 0.5;
 
-// Item 30.
+// Item 28;
+$MySQL:>select p.Name, i.Salary
+from Instructor i, Person p
+where i.InstructorID=p.ID
+    and p.Name='Ricky Ponting';
+
+$MySQL:>select p.Name, i.Salary
+from Instructor i, Person p
+where i.InstructorID=p.ID
+    and p.Name='Darren Lehmann';
+
+// Give everyone a raise, because they deserve it;
+$MySQL:>update Instructor i
+set i.Salary=i.Salary*1.1;
+
+$MySQL:>select p.Name, i.Salary
+from Instructor i, Person p
+where i.InstructorID=p.ID
+    and p.Name='Ricky Ponting';
+
+$MySQL:>select p.Name, i.Salary
+from Instructor i, Person p
+where i.InstructorID=p.ID
+    and p.Name='Darren Lehmann';
+
+// Item 29;
+$MySQL:>insert into Person(Name, ID, Address, DOB)
+values('Trevor Horns', '000957303', '23 Canberra Street', '1964-11-23');
+
+$MySQL:>select *
+from Person p
+where p.Name='Trevor Horns';
+
+// Item 30;
+$MySQL:>delete i.*
+from Instructor i
+inner join Person p on i.InstructorID=p.ID
+where p.Name='Jan Austin';
+
+$MySQL:>delete s.*
+from Student s 
+inner join Person p on s.StudentID=p.ID
+where p.name='Jan Austin';
+
+$MySQL:>delete
+from Person
+where Person.Name='Jan Austin';
+
+$MySQL:>select *
+from Person p
+where p.Name='Jan Austin';
