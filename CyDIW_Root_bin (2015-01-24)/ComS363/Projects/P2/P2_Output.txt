@@ -1,0 +1,36 @@
+*** Connected to the database ***
+ 
+NAME           SALARY
+----           ------
+Min Tuyet    120000.0
+Seth Carney    100000.0
+Chad Moore    100000.0
+Darren Lehmann    80000.0
+Graeme Dilly    120000.0
+John Bracewell    100000.0
+Gavin Larson    80000.0
+Philip Richards    80000.0
+Ricky Ponting    120000.0
+Richard Ellison    100000.0
+
+TOTAL SALARY
+------------
+1000000.0
+
+ 
+NAME           SALARY
+----           ------
+Min Tuyet    129600.0
+Seth Carney    106000.0
+Chad Moore    108000.0
+Darren Lehmann    84800.0
+Graeme Dilly    127200.0
+John Bracewell    108000.0
+Gavin Larson    88000.0
+Philip Richards    80000.0
+Ricky Ponting    129600.0
+Richard Ellison    110000.0
+
+TOTAL SALARY
+------------
+1071200.0

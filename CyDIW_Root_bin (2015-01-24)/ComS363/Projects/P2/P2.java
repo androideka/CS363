@@ -3,7 +3,7 @@ import java.sql.*;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class Project_2
+public class P2
 {
 
     public static void main( String args[] )
@@ -80,7 +80,30 @@ public class Project_2
             Statement project2a = connect.createStatement();
 
             // Execute query, receive results
-            ResultSet resultSet2a
+            ResultSet resultSet2a = project2a.executeQuery("select i.Name, i.Salary" + "  " +
+                "from Instructor i");
+
+            // Process the result set
+            System.out.println(" ");
+            System.out.println("NAME        SALARY");
+            System.out.println("----        ------");
+
+            // Print report
+
+            int count = 0;
+            double totalPayroll = 0;
+
+            String iName;
+            double iSalary;
+
+            while( resultSet2a.next() )
+            {
+                iName = resultSet2a.getString( 1 );
+                iSalary = resultSet2a.getInt( "Salary" );
+                System.out.println(iName + "    " + iSalary);
+                count++;
+                totalPayroll += iSalary;
+            }
         }
     }
 

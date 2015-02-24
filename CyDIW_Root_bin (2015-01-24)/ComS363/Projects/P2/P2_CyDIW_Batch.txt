@@ -1,2 +1,100 @@
 $MySQL:>connect;
 
+$MySQL:> drop table Person;
+$MySQL:> drop table Instructor;
+$MySQL:> drop table Student;
+$MySQL:> drop table Course;
+$MySQL:> drop table Offering;
+$MySQL:> drop table Enrollment;
+$MySQL:> drop table MeritList;
+
+// Create person table;
+$MySQL:>CREATE TABLE Person
+(
+ID CHAR(9) NOT NULL,
+Name CHAR(20),
+Address CHAR(30),
+DOB DATE,
+primary key(ID)
+);
+
+// Create instructor table;
+$MySQL:>CREATE TABLE Instructor
+(
+InstructorID CHAR(9) NOT NULL references Person,
+Rank CHAR(12),
+Salary INTEGER,
+primary key(InstructorID)
+);
+
+// Create student table;
+$MySQL:>CREATE TABLE Student
+(
+StudentID CHAR(9) NOT NULL,
+Classification CHAR(10),
+GPA DOUBLE(3,2),
+MentorID CHAR(9) references Instructor,
+CreditHours INTEGER,
+primary key(StudentID)
+);
+
+// Create course table;
+$MySQL:>CREATE TABLE Course
+(
+CourseCode CHAR(6) NOT NULL,
+CourseName CHAR(50),
+PreReq CHAR(6),
+primary key(CourseCode, PreReq)
+);
+
+// Create offering table;
+$MySQL:>CREATE TABLE Offering
+(
+CourseCode CHAR(6) NOT NULL,
+SectionNo INTEGER NOT NULL,
+InstructorID CHAR(9) NOT NULL references Instructor,
+primary key(CourseCode, SectionNo)
+);
+
+// Create enrollment table;
+$MySQL:>CREATE TABLE Enrollment
+(
+CourseCode CHAR(6) NOT NULL,
+SectionNo INTEGER NOT NULL,
+StudentID CHAR(9) NOT NULL references Student,
+Grade CHAR(4) NOT NULL,
+primary key(CourseCode, StudentID),
+foreign key(CourseCode, SectionNo) references Offering
+);
+
+// Create MeritList table
+$MySQL:>CREATE TABLE MeritList
+(
+StudentID CHAR(9) NOT NULL references Student,
+Classification CHAR(10),
+MentorID CHAR(9),
+GPA DOUBLE(3,2),
+primary key(StudentID)
+);
+
+// Load person table;
+$MySQL:> load | Person | ComS363/Projects/Datasets/University_Dataset.xml;
+
+// Load instructor table;
+$MySQL:> load | Instructor | ComS363/Projects/Datasets/University_Dataset.xml;
+
+// Load student table;
+$MySQL:> load | Student | ComS363/Projects/Datasets/University_Dataset.xml;
+
+// Load course table;
+$MySQL:> load | Course | ComS363/Projects/Datasets/University_Dataset.xml;
+
+// Load offering table;
+$MySQL:> load | Offering | ComS363/Projects/Datasets/University_Dataset.xml;
+
+// Load enrollment table;
+$MySQL:> load | Enrollment | ComS363/Projects/Datasets/University_Dataset.xml;
+
+$MySQL:> select * from MeritList m order by m.GPA desc;
+$MySQL:> select * from Instructor;
+$MySQL:>disconnect;
