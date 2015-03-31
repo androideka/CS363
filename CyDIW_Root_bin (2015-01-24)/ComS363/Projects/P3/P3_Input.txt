@@ -1,0 +1,72 @@
+$MySQL:>connect;
+
+// Item 1: List names of students and their mentors;
+<showtext>
+$Saxon:>
+<Item1>
+{
+  for $s in doc("ComS363/Projects/Datasets/Student.xml")/Students/Student
+
+  let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s/StudentID]/Name
+  let $mID := doc("ComS363/Projects/Datasets/Instructor.xml")/Instructors/Instructor[InstructorID = $s/MentorID]/InstructorID
+  let $mName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $mID]/Name
+
+  return <StudentMentor><StudentName> { $sName } </StudentName> <MentorName> { $mName } </MentorName></StudentMentor>
+}
+</Item1>;
+</showtext>
+
+// Item 2: For each classification, list the classification and the average GPA of students with that classification. Your query should not use any constants, such as "Freshman";
+<showtext>
+$Saxon:>
+<Item2>
+{
+  for $s in distinct-values(doc("ComS363/Projects/Datasets/Student.xml")/Students/Student/Classification)
+
+  let $avgGPA := avg(doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[Classification = $s]/GPA)
+
+  return <ClassificationGPA><Classification> { $s } </Classification><AvgGPA> { $avgGPA } </AvgGPA></ClassificationGPA> 
+}
+</Item2>;
+</showtext>
+
+// Item 3: For each enrolled student, list his/her name and his/her mentor's name;
+<showtext>
+$Saxon:>
+<Item3>
+{
+  for $s in doc("ComS363/Projects/Datasets/Enrollment.xml")/Enrollments/Enrollment/StudentID
+
+  let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s]/Name
+  
+  let $mID := doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[StudentID = $s]/MentorID
+  let $mName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $mID]/Name
+
+  return <EnrolledStudentMentor><StudentName> { $sName } </StudentName><MentorName> { $mName } </MentorName></EnrolledStudentMentor>
+}
+</Item3>;
+</showtext>
+
+// Item 4: List the Names of students who have at least one A in courses they are enrolled in. (Do not consider A- as an A.);
+<showtext>
+$Saxon:>
+<Item4>
+{
+  for $s in distinct-values(doc("ComS363/Projects/Datasets/Enrollment.xml")/Enrollments/Enrollment[Grade = "A"]/StudentID)
+
+  let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s]/Name
+
+  return <AStudents><Name> { $sName } </Name></AStudents>
+}
+</Item4>;
+</showtext>
+
+// Item 5: List the course codes of courses that are prerequisites for the course CS311;
+<showtext>
+$Saxon:>
+<Item5>
+{
+  
+}
+</Item5>;
+</showtext>
