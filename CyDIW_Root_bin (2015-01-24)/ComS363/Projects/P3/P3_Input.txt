@@ -1,4 +1,4 @@
-$MySQL:>connect;
+//$MySQL:>connect;
 
 // Item 1: List names of students and their mentors;
 <showtext>
@@ -50,23 +50,47 @@ $Saxon:>
 // Item 4: List the Names of students who have at least one A in courses they are enrolled in. (Do not consider A- as an A.);
 <showtext>
 $Saxon:>
-<Item4>
+<AStudents>
 {
   for $s in distinct-values(doc("ComS363/Projects/Datasets/Enrollment.xml")/Enrollments/Enrollment[Grade = "A"]/StudentID)
 
   let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s]/Name
 
-  return <AStudents><Name> { $sName } </Name></AStudents>
+  return <AStudent> { $sName } </AStudent>
 }
-</Item4>;
+</AStudents>;
 </showtext>
 
 // Item 5: List the course codes of courses that are prerequisites for the course CS311;
 <showtext>
 $Saxon:>
-<Item5>
+<PreReqsCS311> 
 {
-  
+  for $c in doc("ComS363/Projects/Datasets/Course.xml")/Courses/Course[CourseCode = "CS311"]/PreReq
+
+  return $c
 }
-</Item5>;
+</PreReqsCS311>;
+</showtext>
+
+// Item 6: Restructure Student.xml by classification. There should be one element per classification in which the remaining information about students should be included in one element per student;
+<showtext>
+$Saxon:>
+<Classifications>
+  for $c in distinct-values(doc("ComS363/Projects/Datasets/Student.xml")/Students/Student/Classification)
+
+  let $sID := doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[Classification = $c]/StudentID
+
+  return <Classification> <StudentID>{ $c }</StudentID> </Classification>
+</Classifications>;
+</showtext>
+
+//OOXQUERY;
+
+// Item 7: List the Name, and Rank of faculty who have a salary of 100K or higher;
+<showtext>
+$OOXQuery:>
+<Item7>
+
+</Item7>;
 </showtext>
