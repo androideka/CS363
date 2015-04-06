@@ -76,13 +76,35 @@ $Saxon:>
 // Item 6: Restructure Student.xml by classification. There should be one element per classification in which the remaining information about students should be included in one element per student;
 <showtext>
 $Saxon:>
-<Classifications>
-  for $c in distinct-values(doc("ComS363/Projects/Datasets/Student.xml")/Students/Student/Classification)
+<Class>
+  let $class := fn:distinct-values(doc("ComS363/Projects/Datasets/Student.xml")//Student/Classification)
+  
+  for $c in $class
+  return <Classification year = "{$c}">{
+    for $p in doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person
+    let $s := doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[StudentID = $p/ID]
+    where $s/Classification = $c
+    return <Student> { $p/Name } </Student>
+  }
+  </Classification>
 
-  let $sID := doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[Classification = $c]/StudentID
+</Class>;
+</showtext>
 
-  return <Classification> <StudentID>{ $c }</StudentID> </Classification>
-</Classifications>;
+//Item 6;
+<showtext>
+$Saxon:><Students>
+{
+   let $grade_levels := fn:distinct-values(doc("ComS363/Projects/Datasets/Student.xml")//Student/Classification)
+   for $classification in $grade_levels
+       return <Classification year = "{$classification}">{
+       for $person in doc("ComS363/Projects/Datasets/Person.xml")//Person
+           let $student := doc("ComS363/Projects/Datasets/Student.xml")//Student[StudentID = $person/ID]
+           where $student/Classification = $classification
+           return  <Student>{$person/Name}</Student>
+       }</Classification>
+}
+</Students>;
 </showtext>
 
 //OOXQUERY;
