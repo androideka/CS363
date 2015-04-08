@@ -1,5 +1,3 @@
-//$MySQL:>connect;
-
 // Item 1: List names of students and their mentors;
 <showtext>
 $Saxon:>
@@ -7,11 +5,11 @@ $Saxon:>
 {
   for $s in doc("ComS363/Projects/Datasets/Student.xml")/Students/Student
 
-  let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s/StudentID]/Name
-  let $mID := doc("ComS363/Projects/Datasets/Instructor.xml")/Instructors/Instructor[InstructorID = $s/MentorID]/InstructorID
-  let $mName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $mID]/Name
+    let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s/StudentID]/Name
+    let $mID := doc("ComS363/Projects/Datasets/Instructor.xml")/Instructors/Instructor[InstructorID = $s/MentorID]/InstructorID
+    let $mName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $mID]/Name
 
-  return <StudentMentor><StudentName> { $sName } </StudentName> <MentorName> { $mName } </MentorName></StudentMentor>
+    return <StudentMentor><StudentName> { $sName } </StudentName> <MentorName> { $mName } </MentorName></StudentMentor>
 }
 </Item1>;
 </showtext>
@@ -23,9 +21,9 @@ $Saxon:>
 {
   for $s in distinct-values(doc("ComS363/Projects/Datasets/Student.xml")/Students/Student/Classification)
 
-  let $avgGPA := avg(doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[Classification = $s]/GPA)
+    let $avgGPA := avg(doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[Classification = $s]/GPA)
 
-  return <ClassificationGPA><Classification> { $s } </Classification><AvgGPA> { $avgGPA } </AvgGPA></ClassificationGPA> 
+    return <ClassificationGPA><Classification> { $s } </Classification><AvgGPA> { $avgGPA } </AvgGPA></ClassificationGPA> 
 }
 </Item2>;
 </showtext>
@@ -37,12 +35,12 @@ $Saxon:>
 {
   for $s in doc("ComS363/Projects/Datasets/Enrollment.xml")/Enrollments/Enrollment/StudentID
 
-  let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s]/Name
+    let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s]/Name
   
-  let $mID := doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[StudentID = $s]/MentorID
-  let $mName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $mID]/Name
+    let $mID := doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[StudentID = $s]/MentorID
+    let $mName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $mID]/Name
 
-  return <EnrolledStudentMentor><StudentName> { $sName } </StudentName><MentorName> { $mName } </MentorName></EnrolledStudentMentor>
+    return <EnrolledStudentMentor><StudentName> { $sName } </StudentName><MentorName> { $mName } </MentorName></EnrolledStudentMentor>
 }
 </Item3>;
 </showtext>
@@ -54,9 +52,9 @@ $Saxon:>
 {
   for $s in distinct-values(doc("ComS363/Projects/Datasets/Enrollment.xml")/Enrollments/Enrollment[Grade = "A"]/StudentID)
 
-  let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s]/Name
+    let $sName := doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person[ID = $s]/Name
 
-  return <AStudent> { $sName } </AStudent>
+    return <AStudent> { $sName } </AStudent>
 }
 </AStudents>;
 </showtext>
@@ -68,51 +66,84 @@ $Saxon:>
 {
   for $c in doc("ComS363/Projects/Datasets/Course.xml")/Courses/Course[CourseCode = "CS311"]/PreReq
 
-  return $c
+    return $c
 }
 </PreReqsCS311>;
 </showtext>
 
-// Item 6: Restructure Student.xml by classification. There should be one element per classification in which the remaining information about students should be included in one element per student;
-<showtext>
-$Saxon:>
-<Class>
-  let $class := fn:distinct-values(doc("ComS363/Projects/Datasets/Student.xml")//Student/Classification)
-  
-  for $c in $class
-  return <Classification year = "{$c}">{
-    for $p in doc("ComS363/Projects/Datasets/Person.xml")/Persons/Person
-    let $s := doc("ComS363/Projects/Datasets/Student.xml")/Students/Student[StudentID = $p/ID]
-    where $s/Classification = $c
-    return <Student> { $p/Name } </Student>
-  }
-  </Classification>
-
-</Class>;
-</showtext>
-
 //Item 6;
 <showtext>
-$Saxon:><Students>
+$Saxon:>
+<Students>
 {
-   let $grade_levels := fn:distinct-values(doc("ComS363/Projects/Datasets/Student.xml")//Student/Classification)
-   for $classification in $grade_levels
-       return <Classification year = "{$classification}">{
-       for $person in doc("ComS363/Projects/Datasets/Person.xml")//Person
-           let $student := doc("ComS363/Projects/Datasets/Student.xml")//Student[StudentID = $person/ID]
-           where $student/Classification = $classification
-           return  <Student>{$person/Name}</Student>
-       }</Classification>
+   let $grades := fn:distinct-values(doc("ComS363/Projects/Datasets/Student.xml")//Student/Classification)
+
+   for $grade in $grades
+
+       return <Classification year = "{$grade}">{
+       for $p in doc("ComS363/Projects/Datasets/Person.xml")//Person
+
+           let $s := doc("ComS363/Projects/Datasets/Student.xml")//Student[StudentID = $p/ID]
+
+           where $s/Classification = $grade
+
+           return  <Student>{$p/Name}</Student>
+       }
+       </Classification>
 }
 </Students>;
 </showtext>
-
-//OOXQUERY;
 
 // Item 7: List the Name, and Rank of faculty who have a salary of 100K or higher;
 <showtext>
 $OOXQuery:>
 <Item7>
+{
+  for $f in doc("ComS363/Projects/Datasets/UniversityOODB.xml")//Faculty
 
+    where $f.Salary >= 100000
+
+    return <Faculty> { $f.Name, $f.Rank } </Faculty>
+}
 </Item7>;
+</showtext>
+
+// Item 8: List Names of students and their mentors. (Note that if $s is a student, $s.Mentor will return a faculty element);
+<showtext>
+$OOXQuery:>
+<Item8>
+{
+  for $s in doc("ComS363/Projects/Datasets/UniversityOODB.xml")//Student
+
+    return <StudentMentor> { $s.Name, $s.Mentor.Name } </StudentMentor>
+}
+</Item8>;
+</showtext>
+
+// Item 9: For each faculty, list his / her name, and classification and GPA of students that the faculty is mentoring. For each faculty there should be only one element, the info about students should be nested inside that element.  (Note that if $f is a faculty, $f.Mentoring will return a list of students. You can iterate over this list using the for clause.);
+<showtext>
+$OOXQuery:>
+<Item9>
+{
+  for $f in doc("ComS363/Projects/Datasets/UniversityOODB(ODMG).xml")//Faculty
+    let $mList := $f.Mentoring
+    return <Mentor> { 
+      for $s in $mList
+        return <Mentee> { $f.Name, $s.Classification, $s.GPA } </Mentee>
+    } </Mentor>    
+}
+</Item9>;
+</showtext>
+
+// Item 10: For every offering, list course name, section, instructors' name and enrollment;
+<showtext>
+$OOXQuery:>
+<Item10>
+{
+  let $e := doc("ComS363/Projects/Datasets/UniversityOODB(ODMG).xml")//Enrollment
+  for $o in doc("ComS363/Projects/Datasets/UniversityOODB(ODMG).xml")//Offering
+    where $e.OfferingInfo.CourseInfo.CourseName = $o.CourseInfo.CourseName
+    return <Offering> { $o.CourseInfo.CourseName, $o.Section, $o.Instructor.Name, $e } </Offering>
+}
+</Item10>;
 </showtext>
