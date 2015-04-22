@@ -1,7 +1,24 @@
 // Item 1
-MATCH (tweet:`Tweet`) where tweet.retweeted = false RETURN tweet ORDER BY tweet.retweet_count DESC LIMIT 10
+MATCH (tweet:Tweet) where tweet.retweeted = false RETURN tweet ORDER BY tweet.retweet_count DESC LIMIT 10
 
 // Item 2
 MATCH (hashtag:Hashtag)-[:TAGGED]->(tweet:Tweet)-[:FROM]->(state:State) RETURN (count(distinct(state.name))) AS Longest_Path, hashtag.name AS Hashtag ORDER BY Longest_Path DESC limit 10
 
 // Item 3
+MATCH (state:State)<-[:FROM]-(tweet:Tweet)<-[:TAGGED]-(hashtag:Hashtag) WHERE hashtag.name = "football" AND tweet.created_at > 1351798658000 AND tweet.created_at < 1428987471269 RETURN (count(distinct(state.name))) AS Longest_Path
+
+// Item 4
+MATCH (state:State)<-[:FROM]-(tweet:Tweet)<-[:TAGGED]-(hashtag:Hashtag) WHERE hashtag.name = "football" AND state.name = "NY" RETURN tweet.text, tweet.retweet_count ORDER BY tweet.retweet_count DESC LIMIT 1
+
+// Item 5
+MATCH (hashtag1:Hashtag)-[:TAGGED]->(tweet:Tweet) WHERE hashtag1.name = "football" WITH tweet MATCH (hashtag2:Hashtag)-[:TAGGED]->(tweet)<-[:POSTED]-(user:User) WHERE hashtag2.name = "Statesmen" 
+RETURN user.name AS Name, user.location AS Location
+
+// Item 6
+MATCH (hashtag:Hashtag)-[:TAGGED]->(tweet:Tweet) WHERE hashtag.name = "football" WITH tweet MATCH (source:Source)<-[:USING]-(tweet) RETURN distinct(source.name) AS Platform ORDER BY Platform DESC LIMIT 3
+
+// Item 7
+MATCH (hashtag:Hashtag)-[:TAGGED]->(tweet:Tweet) WHERE hashtag.name = "football" WITH tweet MATCH (tweet)<-[:POSTED]-(user:User) RETURN user.name AS Name, count(tweet) as Count ORDER BY Count DESC LIMIT 10
+
+// Item 8
+MATCH (hashtag:Hashtag)-[:TAGGED]->(tweet:Tweet) WHERE hashtag.name = "bleedblue" WITH tweet MATCH (user:User)-[:POSTED]->(tweet) WHERE user.verified = true RETURN distinct(user.name)
