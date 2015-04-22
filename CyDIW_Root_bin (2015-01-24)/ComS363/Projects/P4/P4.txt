@@ -1,0 +1,7 @@
+// Item 1
+MATCH (tweet:`Tweet`) where tweet.retweeted = false RETURN tweet ORDER BY tweet.retweet_count DESC LIMIT 10
+
+// Item 2
+MATCH (hashtag:Hashtag)-[:TAGGED]->(tweet:Tweet)-[:FROM]->(state:State) RETURN (count(distinct(state.name))) AS Longest_Path, hashtag.name AS Hashtag ORDER BY Longest_Path DESC limit 10
+
+// Item 3
